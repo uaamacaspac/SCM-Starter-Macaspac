@@ -1,8 +1,4 @@
-Certainly! Here's a README tailored to your project details:
-
----
-
-# Project README
+# Module 2 Project
 
 This project utilizes a blockchain development setup with Hardhat and Metamask, focusing on Ethereum transactions within a localhost network.
 
@@ -10,10 +6,6 @@ This project utilizes a blockchain development setup with Hardhat and Metamask, 
 
 1. **Clone the Starter Template**:
    - Begin by cloning the starter template from Chris's repository.
-
-     ```
-     git clone <repository_url>
-     ```
 
 2. **Modify Assessment Contract**:
    - Edited the assessment contract to enhance functionalities:
