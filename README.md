@@ -8,14 +8,15 @@ This project utilizes a blockchain development setup with Hardhat and Metamask, 
    - Begin by cloning the starter template from Chris's repository.
 
 2. **Modify Assessment Contract**:
-   - Edited the assessment contract to enhance functionalities:
-     - Enabled deposit and withdrawal of any value.
-     - Added a transfer function from the ATM to specified addresses (not functional on localhost due to network constraints).
+   - Modified the assessment contract to enhance functionalities and change the theme:
+     - Added custom time increase
+     - Added custom time reduction
+     - Added time transfer to other person(address)
 
 3. **Edit `index.js`**:
    - Updated `index.js` to accommodate expanded functionalities:
-     - Added inputs for deposit and withdrawal amounts.
-     - Integrated inputs for ETH transfer amount and target address.
+     - Modified the code for increasing and reducing time.
+     - Added inputs and button to add time transfer functionality in frontend.
 
 4. **Run Codes and Contract**:
    - Start the Hardhat node for the localhost network:
@@ -48,8 +49,3 @@ This project utilizes a blockchain development setup with Hardhat and Metamask, 
 ## Notes
 
 - Ensure Metamask reflects the correct localhost network settings.
-- The transfer feature is inactive during development due to limitations with localhost and dummy addresses.
-
----
-
-Feel free to customize this README further to include additional project specifics or detailed instructions as needed.
