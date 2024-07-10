@@ -86,7 +86,7 @@ export default function HomePage() {
         const tx = await atm.transferFunds(transferAddress, transferAmount);
         await tx.wait();
         getBalance();
-        setTransferStatus(`${transferAmount} ETH has been transferred to ${transferAddress}.`);
+        setTransferStatus(`${transferAmount} Time has been transferred to ${transferAddress}.`);
       } catch (error) {
         console.error("Transfer error:", error);
         setTransferStatus("Transfer failed. Please try again.");
@@ -96,7 +96,7 @@ export default function HomePage() {
 
   const initUser = () => {
     if (!ethWallet) {
-      return <p>Please install MetaMask to use this ATM.</p>;
+      return <p>Please install MetaMask to use this Time Bank.</p>;
     }
 
     if (!account) {
@@ -112,7 +112,7 @@ export default function HomePage() {
     return (
       <div>
         <p>Your Account: {account}</p>
-        <p>Your Balance: {balance} ETH</p>
+        <p>Your Balance: {balance} Hours</p>
         <div>
           <input
             type="number"
@@ -154,7 +154,7 @@ export default function HomePage() {
   return (
     <main className="container">
       <header>
-        <h1>Welcome to my ATM!</h1>
+        <h1>Welcome to my Time Bank!</h1>
       </header>
       {initUser()}
       <style jsx>{`
