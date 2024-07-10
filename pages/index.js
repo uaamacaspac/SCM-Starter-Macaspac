@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import atm_abi from "../artifacts/contracts/Assessment.sol/Assessment.json";
+import assessmentAbi from "../artifacts/contracts/Assessment.sol/Assessment.json";
 
 export default function HomePage() {
   const [ethWallet, setEthWallet] = useState(undefined);
@@ -14,7 +14,7 @@ export default function HomePage() {
   const [transferStatus, setTransferStatus] = useState("");
 
   const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
-  const atmABI = atm_abi.abi;
+  const atmABI = assessmentAbi.abi;
 
   const getWallet = async () => {
     if (window.ethereum) {
@@ -22,15 +22,15 @@ export default function HomePage() {
     }
 
     if (ethWallet) {
-      const account = await ethWallet.request({ method: "eth_accounts" });
-      handleAccount(account);
+      const accounts = await ethWallet.request({ method: "eth_accounts" });
+      handleAccount(accounts);
     }
   };
 
-  const handleAccount = (account) => {
-    if (account) {
-      console.log("Account connected: ", account);
-      setAccount(account[0]);
+  const handleAccount = (accounts) => {
+    if (accounts.length > 0) {
+      console.log("Account connected: ", accounts[0]);
+      setAccount(accounts[0]);
     } else {
       console.log("No account found");
     }
@@ -45,12 +45,12 @@ export default function HomePage() {
     const accounts = await ethWallet.request({ method: "eth_requestAccounts" });
     handleAccount(accounts);
 
-    // once wallet is set we can get a reference to our deployed contract
+    // Once wallet is set, get a reference to the deployed contract
     getATMContract();
   };
 
   const getATMContract = () => {
-    const provider = new ethers.providers.Web3Provider(ethWallet);
+    const provider = new ethers.providers.JsonRpcProvider("http://localhost:8545"); // Adjust port if necessary
     const signer = provider.getSigner();
     const atmContract = new ethers.Contract(contractAddress, atmABI, signer);
 
@@ -58,31 +58,32 @@ export default function HomePage() {
   };
 
   const getBalance = async () => {
-    if (atm) {
-      setBalance((await atm.getBalance()).toNumber());
+    if (atm && account) {
+      const userBalance = await atm.getBalance(account);
+      setBalance(userBalance.toNumber());
     }
   };
 
   const deposit = async () => {
-    if (atm) {
-      let tx = await atm.deposit(depositAmount);
+    if (atm && account) {
+      const tx = await atm.deposit(depositAmount, { value: depositAmount });
       await tx.wait();
       getBalance();
     }
   };
 
   const withdraw = async () => {
-    if (atm) {
-      let tx = await atm.withdraw(withdrawAmount);
+    if (atm && account) {
+      const tx = await atm.withdraw(withdrawAmount);
       await tx.wait();
       getBalance();
     }
   };
 
   const transferFunds = async () => {
-    if (atm) {
+    if (atm && account) {
       try {
-        let tx = await atm.transferFunds(transferAddress, transferAmount);
+        const tx = await atm.transferFunds(transferAddress, transferAmount);
         await tx.wait();
         getBalance();
         setTransferStatus(`${transferAmount} ETH has been transferred to ${transferAddress}.`);
@@ -94,19 +95,17 @@ export default function HomePage() {
   };
 
   const initUser = () => {
-    // Check to see if user has Metamask
     if (!ethWallet) {
-      return <p>Please install Metamask in order to use this ATM.</p>;
+      return <p>Please install MetaMask to use this ATM.</p>;
     }
 
-    // Check to see if user is connected. If not, connect to their account
     if (!account) {
       return (
-        <button onClick={connectAccount}>Please connect your Metamask wallet</button>
+        <button onClick={connectAccount}>Connect MetaMask</button>
       );
     }
 
-    if (balance == undefined) {
+    if (balance === undefined) {
       getBalance();
     }
 
@@ -143,6 +142,7 @@ export default function HomePage() {
           />
           <button onClick={transferFunds}>Transfer</button>
         </div>
+        {transferStatus && <p>{transferStatus}</p>}
       </div>
     );
   };
@@ -157,9 +157,6 @@ export default function HomePage() {
         <h1>Welcome to my ATM!</h1>
       </header>
       {initUser()}
-      <div>
-        {transferStatus && <p>{transferStatus}</p>}
-      </div>
       <style jsx>{`
         .container {
           text-align: center;
