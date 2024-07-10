@@ -3,41 +3,41 @@ pragma solidity ^0.8.9;
 
 contract Assessment {
     address payable public owner;
-    mapping(address => uint256) public balances;
+    mapping(address => uint256) public remainingTimes;
 
-    event Deposit(address indexed from, uint256 amount);
-    event Withdraw(address indexed to, uint256 amount);
-    event Transferred(address indexed from, address indexed to, uint256 amount);
+    event IncreaseTime(address indexed from, uint256 amount);
+    event ReduceTime(address indexed to, uint256 amount);
+    event TransferTime(address indexed from, address indexed to, uint256 amount);
 
-    constructor(uint256 initBalance) payable {
+    constructor(uint256 remainingTime) payable {
         owner = payable(msg.sender);
-        balances[msg.sender] = initBalance;
+        remainingTimes[msg.sender] = remainingTime;
     }
 
-    function getBalance(address _account) public view returns (uint256) {
-        return balances[_account];
+    function getRemainingTime(address _account) public view returns (uint256) {
+        return remainingTimes[_account];
     }
 
-    function deposit(uint256 _amount) public payable {
-        balances[msg.sender] += _amount;
-        emit Deposit(msg.sender, _amount);
+    function increaseTime(uint256 _amount) public payable {
+        remainingTimes[msg.sender] += _amount;
+        emit IncreaseTime(msg.sender, _amount);
     }
 
-    function withdraw(uint256 _withdrawAmount) public {
-        require(balances[msg.sender] >= _withdrawAmount, "Insufficient balance");
+    function reduceTime(uint256 _withdrawAmount) public {
+        require(remainingTimes[msg.sender] >= _withdrawAmount, "Insufficient balance");
 
-        balances[msg.sender] -= _withdrawAmount;
+        remainingTimes[msg.sender] -= _withdrawAmount;
         payable(msg.sender).transfer(_withdrawAmount);
 
-        emit Withdraw(msg.sender, _withdrawAmount);
+        emit ReduceTime(msg.sender, _withdrawAmount);
     }
 
-    function transferFunds(address _to, uint256 _amount) public {
-        require(balances[msg.sender] >= _amount, "Insufficient balance");
+    function transferTime(address _to, uint256 _amount) public {
+        require(remainingTimes[msg.sender] >= _amount, "Insufficient balance");
 
-        balances[msg.sender] -= _amount;
-        balances[_to] += _amount;
+        remainingTimes[msg.sender] -= _amount;
+        remainingTimes[_to] += _amount;
 
-        emit Transferred(msg.sender, _to, _amount);
+        emit TransferTime(msg.sender, _to, _amount);
     }
 }

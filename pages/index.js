@@ -7,8 +7,8 @@ export default function HomePage() {
   const [account, setAccount] = useState(undefined);
   const [atm, setATM] = useState(undefined);
   const [balance, setBalance] = useState(undefined);
-  const [depositAmount, setDepositAmount] = useState(0);
-  const [withdrawAmount, setWithdrawAmount] = useState(0);
+  const [increaseTimeAmount, setTimeIncrease] = useState(0);
+  const [reduceTimeAmount, setReduceTime] = useState(0);
   const [transferAmount, setTransferAmount] = useState(0);
   const [transferAddress, setTransferAddress] = useState("");
   const [transferStatus, setTransferStatus] = useState("");
@@ -57,35 +57,35 @@ export default function HomePage() {
     setATM(atmContract);
   };
 
-  const getBalance = async () => {
+  const getRemainingTimes = async () => {
     if (atm && account) {
-      const userBalance = await atm.getBalance(account);
+      const userBalance = await atm.getRemainingTime(account);
       setBalance(userBalance.toNumber());
     }
   };
 
-  const deposit = async () => {
+  const increaseTime = async () => {
     if (atm && account) {
-      const tx = await atm.deposit(depositAmount, { value: depositAmount });
+      const tx = await atm.increaseTime(increaseTimeAmount, { value: increaseTimeAmount });
       await tx.wait();
-      getBalance();
+      getRemainingTimes();
     }
   };
 
-  const withdraw = async () => {
+  const reduceTime = async () => {
     if (atm && account) {
-      const tx = await atm.withdraw(withdrawAmount);
+      const tx = await atm.reduceTime(reduceTimeAmount);
       await tx.wait();
-      getBalance();
+      getRemainingTimes();
     }
   };
 
-  const transferFunds = async () => {
+  const transferTime = async () => {
     if (atm && account) {
       try {
-        const tx = await atm.transferFunds(transferAddress, transferAmount);
+        const tx = await atm.transferTime(transferAddress, transferAmount);
         await tx.wait();
-        getBalance();
+        getRemainingTimes();
         setTransferStatus(`${transferAmount} Time has been transferred to ${transferAddress}.`);
       } catch (error) {
         console.error("Transfer error:", error);
@@ -106,28 +106,28 @@ export default function HomePage() {
     }
 
     if (balance === undefined) {
-      getBalance();
+      getRemainingTimes();
     }
 
     return (
       <div>
         <p>Your Account: {account}</p>
-        <p>Your Balance: {balance} Hours</p>
+        <p>Your Balance: {balance} Hour/s</p>
         <div>
           <input
             type="number"
-            placeholder="Deposit Amount"
-            onChange={(e) => setDepositAmount(e.target.value)}
+            placeholder="Time Increase Amount"
+            onChange={(e) => setTimeIncrease(e.target.value)}
           />
-          <button onClick={deposit}>Deposit</button>
+          <button onClick={increaseTime}>Increase Time</button>
         </div>
         <div>
           <input
             type="number"
-            placeholder="Withdraw Amount"
-            onChange={(e) => setWithdrawAmount(e.target.value)}
+            placeholder="Reduce Time"
+            onChange={(e) => setReduceTime(e.target.value)}
           />
-          <button onClick={withdraw}>Withdraw</button>
+          <button onClick={reduceTime}>Reduce Time</button>
         </div>
         <div>
           <input
@@ -140,7 +140,7 @@ export default function HomePage() {
             placeholder="Recipient Address"
             onChange={(e) => setTransferAddress(e.target.value)}
           />
-          <button onClick={transferFunds}>Transfer</button>
+          <button onClick={transferTime}>Transfer</button>
         </div>
         {transferStatus && <p>{transferStatus}</p>}
       </div>
